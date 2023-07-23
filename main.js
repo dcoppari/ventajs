@@ -261,8 +261,18 @@ class Carrito {
   //
   actualizarCarrito() {
     const carrito = JSON.stringify(this.carrito);
-    localStorage.setItem("carrito", carrito);
-    this.mostrar();
+    if (localStorage.setItem("carrito", carrito) != false) {
+      Toastify({ text: "Carrito Actualizado" }).showToast();
+      this.mostrar();
+    } else {
+      Toastify({
+        text: "Error al guardar carrito",
+        style: {
+          background: "red",
+          color: "white",
+        },
+      }).showToast();
+    }
   }
 }
 
