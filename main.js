@@ -17,6 +17,7 @@ class GestionProductos {
   //
   constructor() {
     this.arrProductos = [];
+    this.inicializarBase();
   }
 
   //
@@ -56,6 +57,7 @@ class GestionProductos {
     }
 
     // Controlo que haya existencias
+    console.log(producto.existencia, controlCantidad);
     if (producto.existencia <= controlCantidad) {
       swal({
         text: `Producto ${producto.nombre} no cuenta con existencia disponible.`,
@@ -77,55 +79,17 @@ class GestionProductos {
     return producto;
   }
 
-  //
-  // Funcion que muestra los resultados en base a los productos ingresados
-  //
-  mostrarResultado() {
-    const fechaActual = new Date();
-
-    if (this.arrProductos.length === 0) {
-      console.log("No se ingresaron productos");
-      return;
-    }
-
-    let totalProductos = this.arrProductos.length;
-    let totalExistencia = 0;
-    let totalExistenciaValorizada = 0;
-
-    let listaVencidos = this.arrProductos.filter((a) => a.vencimiento < fechaActual);
-    let productoMasCaro = this.arrProductos.sort((a, b) => b.precioNeto - a.precioNeto)[0];
-
-    for (const producto of this.arrProductos) {
-      totalExistencia += producto.existencia;
-      totalExistenciaValorizada += producto.existencia * producto.precioNeto;
-    }
-
-    // Muestro por pantalla los resultados obtenidos en los cálculos
-    console.log(`Total de productos: ${totalProductos}`);
-    console.log(`Total de existencias: ${totalExistencia}`);
-    console.log(`Total existencias valorizadas: ${totalExistenciaValorizada}`);
-    console.log(`Producto más caro: ${productoMasCaro.nombre} $${productoMasCaro.precioVenta}`);
-
-    // Muestro detalle de los productos vencidos
-    console.log(`Listado de productos vencidos:`);
-
-    for (const producto of listaVencidos) {
-      let diasVencido = Math.ceil((fechaActual - producto.vencimiento) / (1000 * 60 * 60 * 24));
-      let vencimiento = this.formatearFecha(producto.vencimiento);
-
-      console.log(`El producto: ${producto.codigo} - ${producto.nombre}, Venció el ${vencimiento} hace ${diasVencido} días`);
-    }
-  }
-
-  //
-  // Utilizado para dar formato al visualizar la fecha
-  //
-  formatearFecha(fechaIngreso) {
-    let dia = fechaIngreso.getDate();
-    let mes = fechaIngreso.getMonth() + 1;
-    let anio = fechaIngreso.getFullYear();
-
-    return `${dia}/${mes}/${anio}`;
+  inicializarBase() {
+    this.agregarProducto("7790123456785", "Leche largavida", 25.0, 50, "2023-12-31");
+    this.agregarProducto("7791123456789", "Yogur con cereales", 39.0, 30, "2023-07-01");
+    this.agregarProducto("7792123456782", "Queso de maquina", 59.0, 20, "2023-11-30");
+    this.agregarProducto("7793123456786", "Jamón cocido", 9.0, 100, "2023-09-30");
+    this.agregarProducto("7794123456780", "Pure de tomates", 49.0, 15, "2024-08-20");
+    this.agregarProducto("7795123456784", "Fideos moñito", 79.0, 10, "2023-12-31");
+    this.agregarProducto("7796123456788", "Aceite de oliva", 4.0, 200, "2024-07-31");
+    this.agregarProducto("7797123456781", "Galletitas surtido", 69.0, 5, "2023-10-10");
+    this.agregarProducto("7798123456785", "Café tostado", 89.0, 8, "2023-09-15");
+    this.agregarProducto("7799123456789", "Cerveza en lata", 14.0, 50, "2023-11-15");
   }
 }
 
@@ -157,7 +121,6 @@ class Carrito {
     if (id != 0) {
       let posicion = this.carrito.productos.findIndex((producto) => producto.id === parseInt(id));
       let producto = this.carrito.productos[posicion];
-      console.log(producto);
       producto.cantidad = parseInt(cantidad);
       producto.total = Math.round(parseFloat(producto.precioVenta) * parseFloat(producto.cantidad));
       this.carrito.productos[posicion] = producto;
@@ -373,30 +336,10 @@ function main() {
       }
     });
   };
-
-  miCarrito.vaciar();
-  miCarrito.agregar("7792123456782", 1);
-  miCarrito.agregar("7793123456786", 5);
-  miCarrito.agregar("7794123456780", 3);
-  miCarrito.mostrar();
-}
-
-function llenarBase(baseStock) {
-  baseStock.agregarProducto("7790123456785", "Leche largavida", 25.0, 50, "2023-12-31");
-  baseStock.agregarProducto("7791123456789", "Yogur con cereales", 39.0, 30, "2023-07-01");
-  baseStock.agregarProducto("7792123456782", "Queso de maquina", 59.0, 20, "2023-11-30");
-  baseStock.agregarProducto("7793123456786", "Jamón cocido", 9.0, 100, "2023-09-30");
-  baseStock.agregarProducto("7794123456780", "Pure de tomates", 49.0, 15, "2024-08-20");
-  baseStock.agregarProducto("7795123456784", "Fideos moñito", 79.0, 10, "2023-12-31");
-  baseStock.agregarProducto("7796123456788", "Aceite de oliva", 4.0, 200, "2024-07-31");
-  baseStock.agregarProducto("7797123456781", "Galletitas surtido", 69.0, 5, "2023-10-10");
-  baseStock.agregarProducto("7798123456785", "Café tostado", 89.0, 8, "2023-09-15");
-  baseStock.agregarProducto("7799123456789", "Cerveza en lata", 14.0, 50, "2023-11-15");
 }
 
 // Inicializa la base de stock
 const miStock = new GestionProductos();
-llenarBase(miStock);
 
 // Inicializa el objeto carrito
 const miCarrito = new Carrito(miStock);
