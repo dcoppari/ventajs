@@ -1,4 +1,5 @@
-const MAX_DAYS = 5;
+// Mínimo de días que se necesitan para poder entregar el pedido
+const MIN_DAYS = 5;
 
 class Producto {
   constructor(codigo, nombre, precioNeto, precioVenta, existencia, vencimiento) {
@@ -49,7 +50,7 @@ class GestionProductos {
 
     // Controlo que exista
     if (!producto) {
-      swal({
+      Swal.fire({
         text: `Producto ${codigo} no encontrado.`,
         icon: "error",
       });
@@ -59,7 +60,7 @@ class GestionProductos {
     // Controlo que haya existencias
     console.log(producto.existencia, controlCantidad);
     if (producto.existencia <= controlCantidad) {
-      swal({
+      Swal.fire({
         text: `Producto ${producto.nombre} no cuenta con existencia disponible.`,
         icon: "error",
       });
@@ -69,7 +70,7 @@ class GestionProductos {
     // Controla productos vencidos
     let diasVencido = Math.ceil((fechaActual - producto.vencimiento) / (1000 * 60 * 60 * 24));
     if (diasVencido > 0) {
-      swal({
+      Swal.fire({
         text: `El producto: ${producto.codigo} - ${producto.nombre}, Venció hace ${diasVencido} días`,
         icon: "error",
       });
@@ -109,7 +110,7 @@ class Carrito {
 
     // Valido que la fecha de entrega este dentro de los plazos posibles
     const fechaPosible = new Date();
-    fechaPosible.setDate(fechaActual.getDate() + MAX_DAYS);
+    fechaPosible.setDate(fechaActual.getDate() + MIN_DAYS);
 
     return fechaIngresada >= fechaPosible ? true : false;
   }
@@ -171,7 +172,7 @@ class Carrito {
     if (posicion !== -1) {
       const producto = this.carrito.productos[posicion];
 
-      swal({
+      Swal.fire({
         title: "Desea borrar el producto?",
         text: `Va a borrar del carrito ${producto.cantidad} unidades de ${producto.nombre}`,
         icon: "warning",
@@ -236,9 +237,9 @@ class Carrito {
     }
 
     // Muestro totales
-    importeNeto.innerText = `$${Math.round(sumaNeto)}`;
-    importeIVA.innerText = `$${Math.round(sumaIVA)}`;
-    importeTotal.innerText = `$${Math.round(sumaTotal)}`;
+    importeNeto.innerText = `$${Math.round(sumaNeto).toFixed(2)}`;
+    importeIVA.innerText = `$${Math.round(sumaIVA).toFixed(2)}`;
+    importeTotal.innerText = `$${Math.round(sumaTotal).toFixed(2)}`;
 
     // Limpio los cuadros de ingreso
     const txtId = document.getElementById("itemId");
@@ -287,18 +288,29 @@ function main() {
   const txtPrecio = document.getElementById("precio");
   const txtTotal = document.getElementById("total");
 
-  const fechaEntrega = document.getElementById("fechaEntrega");
-  fechaEntrega.onchange = (e) => {
+  const frmModalEnvio = new bootstrap.Modal(document.getElementById("modal-container-envio"));
+
+  const txtNombreCliente = document.getElementById("nombreCliente");
+  const txtDomicilioCliente = document.getElementById("domicilioCliente");
+  const txtEmailCliente = document.getElementById("emailCliente");
+  const txtFechaEntrega = document.getElementById("fechaEntrega");
+
+  const btnGuardarEnvio = document.getElementById("btnGuardarEnvio");
+  const btnCargar = document.getElementById("btnCargar");
+  const btnNuevo = document.getElementById("btnNuevo");
+
+  // validacion de la fecha de entrega
+  txtFechaEntrega.onchange = (e) => {
     if (!miCarrito.validarEntrega(e.target.value)) {
-      swal({
+      Swal.fire({
         title: "Fecha de entrega no válida",
-        text: "Le fecha de entrega debe ser posterior dentro de 5 días o más",
+        text: `Le fecha de entrega debe ser posterior a ${MIN_DAYS} días a partir de la fecha`,
         icon: "error",
       }).then((e.target.value = undefined));
     }
   };
 
-  // eventos
+  // carga de un producto
   txtCodigo.onchange = (e) => {
     const codigo = e.target.value;
     const producto = miStock.buscarProducto(codigo);
@@ -308,7 +320,7 @@ function main() {
       txtPrecio.innerText = producto.precioVenta;
       txtTotal.innerText = parseInt(txtCantidad.value || 0) * parseFloat(txtPrecio.innerText);
     } else {
-      swal({ text: "Código de producto inexistente", icon: "error" }).then(() => {
+      Swal.fire({ text: "Código de producto inexistente", icon: "error" }).then(() => {
         document.getElementById("codigo").focus();
         document.getElementById("codigo").select();
       });
@@ -325,24 +337,32 @@ function main() {
   };
 
   // Cargar un item a la grilla
-  const btnCargar = document.getElementById("btnCargar");
   btnCargar.onclick = (e) => {
-    miCarrito.agregar(txtCodigo.value, txtCantidad.value, txtId.value);
+    txtCodigo.value.trim() != "" && parseInt(txtCantidad.value) != 0 ? miCarrito.agregar(txtCodigo.value, txtCantidad.value, txtId.value) : null;
+  };
+
+  // Guarda los datos de envio
+  btnGuardarEnvio.onclick = (e) => {
+    alert("Guardar");
+    console.log(frmModalEnvio);
+    frmModalEnvio.hide();
   };
 
   // Reinicializa el formulario
-  const btnNuevo = document.getElementById("btnNuevo");
   btnNuevo.onclick = (e) => {
-    swal({
+    Swal.fire({
       title: "Este proceso es irreversible",
       text: "Se borrarán todos los items del carrito.",
       icon: "warning",
-      buttons: ["Cancelar", "Borrar"],
-      dangerMode: true,
+      showCancelButton: true,
+      confirmButtonText: "Borrar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
     }).then((borrar) => {
-      if (borrar) {
+      if (borrar.isConfirmed) {
         miCarrito.vaciar();
-        swal({ text: "Carrito borrado exitosamente.", icon: "success" });
+        Swal.fire({ text: "Carrito borrado exitosamente.", icon: "success" });
       }
     });
   };
