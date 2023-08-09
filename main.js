@@ -176,10 +176,11 @@ class Carrito {
         title: "Desea borrar el producto?",
         text: `Va a borrar del carrito ${producto.cantidad} unidades de ${producto.nombre}`,
         icon: "warning",
-        buttons: ["Cancelar", "Borrar"],
-        dangerMode: true,
+        showCancelButton: true,
+        confirmButtonText: "Borrar",
+        cancelButtonText: "Cancelar",
       }).then((borrar) => {
-        if (borrar) {
+        if (borrar.isConfirmed) {
           this.carrito.productos.splice(posicion, 1);
           this.actualizarCarrito();
         }
