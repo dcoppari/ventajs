@@ -96,7 +96,7 @@ class GestionProductos {
 
 class Carrito {
   constructor(baseStock) {
-    this.carrito = JSON.parse(localStorage.getItem("carrito") || '{"productos":[]}');
+    this.carrito = JSON.parse(localStorage.getItem("carrito") || '{"esEnvio": false, "productos":[]}');
     this.baseStock = baseStock;
     this.mostrar();
   }
@@ -104,7 +104,7 @@ class Carrito {
   //
   // Metodo para validar si la fecha de entrega esta en los plazos establecidos
   //
-  validarEntrega(fecha) {
+  validarFechaEntrega(fecha) {
     const fechaActual = new Date();
     const fechaIngresada = new Date(fecha);
 
@@ -113,6 +113,28 @@ class Carrito {
     fechaPosible.setDate(fechaActual.getDate() + MIN_DAYS);
 
     return fechaIngresada >= fechaPosible ? true : false;
+  }
+
+  //
+  // Guardar los datos de entrega
+  //
+  guardarDatosEntrega(nombre, domicilio, email, fecha) {
+    this.carrito.envio = {
+      nombreCliente: nombre,
+      domicilioCliente: domicilio,
+      emailCliente: email,
+      fechaEntrega: fecha,
+    };
+
+    this.actualizarCarrito();
+  }
+
+  //
+  // Borrar los datos de la entrega
+  //
+  borrarDatosEntrega() {
+    delete this.carrito.envio;
+    this.actualizarCarrito();
   }
 
   //
@@ -200,7 +222,24 @@ class Carrito {
   // Actualizar la pantalla de carga
   //
   mostrar() {
-    const fechaEntrega = document.getElementById("fechaEntrega");
+    const btnEnvio = document.getElementById("btnEnvio");
+    const txtNombreCliente = document.getElementById("nombreCliente");
+    const txtDomicilioCliente = document.getElementById("domicilioCliente");
+    const txtEmailCliente = document.getElementById("emailCliente");
+    const txtFechaEntrega = document.getElementById("fechaEntrega");
+
+    // Muestro datos de envio
+    if (this.carrito.esEnvio) {
+      txtNombreCliente.value = this.carrito.envio.nombreCliente;
+      txtDomicilioCliente.value = this.carrito.envio.domicilioCliente;
+      txtEmailCliente.value = this.carrito.envio.emailCliente;
+      txtFechaEntrega.value = this.carrito.envio.fechaEntrega;
+      btnEnvio.innerHTML = `Información de Envío
+      <span class="badge bg-warning text-dark">Cargada</span>      `;
+    } else {
+      btnEnvio.innerHTML = `Información de Envío`;
+    }
+
     const lista = document.getElementById("detalle_productos");
 
     const importeNeto = document.getElementById("importeNeto");
@@ -253,7 +292,7 @@ class Carrito {
     txtId.value = "0";
     txtCodigo.value = "";
     txtDescripcion.innerText = "\b";
-    txtCantidad.value = "0";
+    txtCantidad.value = "1";
     txtPrecio.innerText = "0.00";
     txtTotal.innerText = "0.00";
   }
@@ -262,7 +301,9 @@ class Carrito {
   // Grabar las modificaciones del carrito al localStorage
   //
   actualizarCarrito() {
+    this.carrito.esEnvio = this.carrito.envio != undefined;
     const carrito = JSON.stringify(this.carrito);
+    console.log(carrito);
     if (localStorage.setItem("carrito", carrito) != false) {
       Toastify({ text: "Carrito Actualizado" }).showToast();
       this.mostrar();
@@ -297,12 +338,13 @@ function main() {
   const txtFechaEntrega = document.getElementById("fechaEntrega");
 
   const btnGuardarEnvio = document.getElementById("btnGuardarEnvio");
+  const btnBorrarEnvio = document.getElementById("btnBorrarEnvio");
   const btnCargar = document.getElementById("btnCargar");
   const btnNuevo = document.getElementById("btnNuevo");
 
   // validacion de la fecha de entrega
   txtFechaEntrega.onchange = (e) => {
-    if (!miCarrito.validarEntrega(e.target.value)) {
+    if (!miCarrito.validarFechaEntrega(e.target.value)) {
       Swal.fire({
         title: "Fecha de entrega no válida",
         text: `Le fecha de entrega debe ser posterior a ${MIN_DAYS} días a partir de la fecha`,
@@ -342,11 +384,37 @@ function main() {
     txtCodigo.value.trim() != "" && parseInt(txtCantidad.value) != 0 ? miCarrito.agregar(txtCodigo.value, txtCantidad.value, txtId.value) : null;
   };
 
+  // Borrar los datos de envio
+  btnBorrarEnvio.onclick = (e) => {
+    Swal.fire({
+      title: "Este proceso es irreversible",
+      text: "Se borrarán los datos de envío.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Borrar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    }).then((borrar) => {
+      if (borrar.isConfirmed) {
+        miCarrito.borrarDatosEntrega();
+        frmModalEnvio.hide();
+      }
+    });
+  };
+
   // Guarda los datos de envio
   btnGuardarEnvio.onclick = (e) => {
-    alert("Guardar");
-    console.log(frmModalEnvio);
-    frmModalEnvio.hide();
+    if (!miCarrito.validarFechaEntrega(txtFechaEntrega.value)) {
+      Swal.fire({
+        title: "Fecha de entrega no válida",
+        text: `Le fecha de entrega debe ser posterior a ${MIN_DAYS} días a partir de la fecha`,
+        icon: "error",
+      }).then((e.target.value = undefined));
+    } else {
+      miCarrito.guardarDatosEntrega(txtNombreCliente.value, txtDomicilioCliente.value, txtEmailCliente.value, txtFechaEntrega.value);
+      frmModalEnvio.hide();
+    }
   };
 
   // Reinicializa el formulario
