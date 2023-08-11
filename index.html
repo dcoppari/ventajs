@@ -9,103 +9,218 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css" />
   </head>
   <body>
-    <div class="container-fluid">
-      <div id="cabecera">
-        <div class="row mt-2">
-          <div class="col-md-2 col-12"><label for="nombreCliente">Nombre del Cliente</label></div>
-          <div class="col-md-10 col-12"><input type="text" class="form-control mb-2 mr-md-2" id="nombreCliente" /></div>
-        </div>
-        <div class="row mt-2">
-          <div class="col-md-2 col-12"><label for="domicilioCliente">Domicilio del Cliente</label></div>
-          <div class="col-md-10 col-12"><input type="text" class="form-control mb-2 mr-md-2" id="domicilioCliente" /></div>
-        </div>
-        <div class="row mt-2">
-          <div class="col-md-2 col-12"><label for="emailCliente">E-mail del Cliente:</label></div>
-          <div class="col-md-10 col-12"><input type="email" class="form-control mb-2 mr-md-2" id="emailCliente" /></div>
-        </div>
-        <div class="row mt-2">
-          <div class="col-md-2 col-12"><label for="fechaEntrega">Fecha de Entrega</label></div>
-          <div class="col-md-10 col-12"><input type="date" class="form-control mb-2 mr-md-2" id="fechaEntrega" /></div>
-        </div>
-      </div>
-
-      <div class="row mt-3">
-        <div class="col-12">
-          <table id="detalle" class="table table-bordered table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Código</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Precio Unitario</th>
-                <th scope="col">Total</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody id="detalle_productos"></tbody>
-            <tfoot style="border-top: 2px solid black !important">
-              <tr>
-                <td rowspan="3" colspan="3"></td>
-                <td style="background-color: gray">Neto</td>
-                <td id="importeNeto">$0.00</td>
-                <td rowspan="3"></td>
-              </tr>
-              <tr>
-                <td style="background-color: gray">IVA</td>
-                <td id="importeIVA">$0.00</td>
-              </tr>
-              <tr>
-                <td style="background-color: gray">Total</td>
-                <td id="importeTotal">$0.00</td>
-              </tr>
-            </tfoot>
-          </table>
+    <div class="container-fluid p-0 m-0">
+      <div class="row m-0">
+        <div class="col-12 p-0">
+          <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="container-fluid">
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-1">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <a class="navbar-brand" href="#">Sistema de Punto de Venta</a>
+              <div class="collapse navbar-collapse justify-content-end" id="navbar-collapse-1">
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" id="btnNuevo">Limpiar</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
         </div>
       </div>
 
-      <div class="row mt-2">
-        <div class="col-md-2 col-12">
-          <label for="codigo">Código:</label>
-          <input type="number" class="form-control mb-2 mr-md-2" id="codigo" />
+      <div class="row m-0">
+        <div class="col-12 col-md-8 p-5">
+          <div class="row">
+            <div class="col-12">
+              <h5 class="pb-2">Lista de Productos</h5>
+              <table class="table table-hover table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Precio Unitario</th>
+                    <th scope="col">Total</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody id="detalle_productos"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div class="col-md-4 col-12">
-          <label for="descripcion">Descripción:</label>
-          <span class="form-control mb-2 mr-md-2" id="descripcion">Producto X</span>
-        </div>
-        <div class="col-md-2 col-12">
-          <label for="cantidad">Cantidad:</label>
-          <input type="number" class="form-control mb-2 mr-md-2" id="cantidad" />
-        </div>
-        <div class="col-md-2 col-12">
-          <label for="precio">P.Unitario:</label>
-          <span class="form-control mb-2 mr-md-2" id="precio">$0.00</span>
-        </div>
-        <div class="col-md-2 col-12">
-          <label for="total">Total:</label>
-          <span class="form-control mb-2 mr-md-2" id="total">$0.00</span>
-        </div>
-      </div>
 
-      <div class="row mt-2">
-        <div class="col-md-2 offset-md-10 col-12 text-end">
-          <input type="hidden" id="itemId" />
-          <button class="btn btn-primary" id="btnCargar">Cargar</button>
-        </div>
-      </div>
+        <div class="col-12 col-md-4 p-5 bg-light">
+          <!-- INGRESO DE PRODUCTOS -->
+          <div class="row">
+            <div class="col-12">
+              <h5 class="pb-2 border-bottom">Ingresar producto</h5>
+              <form role="form">
+                <div class="form-group mb-2">
+                  <label for="codigo">Código:</label>
+                  <div class="input-group mb-3">
+                    <input type="number" class="form-control" id="codigo" />
+                    <button class="btn btn-warning" type="button" id="btnAyuda">Ayuda</button>
+                  </div>
+                  <p class="help-block">Ingrese código de producto mediante scanner o presione ayuda para buscar</p>
+                </div>
+                <div class="form-group mb-2">
+                  <label for="descripcion">Descripción:</label>
+                  <span class="form-control" id="descripcion"></span>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-12 col-md-4">
+                    <div class="form-group">
+                      <label for="cantidad">Cantidad:</label>
+                      <input type="number" class="form-control text-end" id="cantidad" />
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <div class="form-group">
+                      <label for="precio">P.Unitario:</label>
+                      <span class="form-control text-end" id="precio">$0.00</span>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <div class="form-group">
+                      <label for="total">P.Total:</label>
+                      <span class="form-control text-end" id="total">$0.00</span>
+                    </div>
+                  </div>
+                </div>
 
-      <div class="row mt-2" id="botonera">
-        <div class="col-12 text-center">
-          <button id="btnNuevo" class="btn btn-primary">Nuevo</button>
-          <button id="btnFinalizar" class="btn btn-success">Finalizar</button>
+                <div class="form-group mb-2 d-flex justify-content-end w-100">
+                  <input type="hidden" id="itemId" />
+                  <button class="btn btn-primary" id="btnCargar">Cargar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- TOTALES -->
+          <div class="row mt-3">
+            <div class="col-12 col-md-10 offset-1">
+              <div class="card border-dark">
+                <div class="card-header bg-dark text-white">
+                  <h5 class="card-title m-0">A Pagar</h5>
+                </div>
+                <div class="card-body">
+                  <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between">
+                      <span>Neto</span>
+                      <span id="importeNeto">$0.00</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                      <span>IVA</span>
+                      <span id="importeIVA">$0.00</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                      <span>Descuentos</span>
+                      <span>$0.00</span>
+                    </li>
+                  </ul>
+                  <hr />
+                  <div class="d-flex justify-content-between">
+                    <strong>Total:</strong>
+                    <strong id="importeTotal">$0.00</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACCION -->
+          <div class="row mt-3">
+            <div class="col-12">
+              <a id="btnEnvio" href="#" role="button" class="btn btn-secondary btn-block w-100 mb-2" data-bs-toggle="modal" data-bs-target="#modal-envio">Información de Envío</a>
+              <button id="btnFinalizar" type="button" class="btn btn-success btn-block w-100 mb-2">FINALIZAR</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="modal-envio" role="dialog" aria-labelledby="modal-delivery" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-delivery">Ingreso datos del Cliente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form role="form" id="cabecera">
+              <div class="mb-3">
+                <label for="nombreCliente" class="form-label">Nombre del Cliente</label>
+                <input type="text" class="form-control" id="nombreCliente" />
+              </div>
+              <div class="mb-3">
+                <label for="domicilioCliente" class="form-label">Domicilio del Cliente</label>
+                <input type="text" class="form-control" id="domicilioCliente" />
+              </div>
+              <div class="mb-3">
+                <label for="emailCliente" class="form-label">E-mail del Cliente:</label>
+                <input type="email" class="form-control" id="emailCliente" />
+              </div>
+              <div class="mb-3">
+                <label for="fechaEntrega" class="form-label">Fecha de Entrega</label>
+                <input type="date" class="form-control" id="fechaEntrega" />
+                <p class="help-block">Ingrese una fecha mayor a 5 días</p>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" id="btnBorrarEnvio">Borrar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary" id="btnGuardarEnvio">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modal-ayuda" aria-labelledby="modal-ayuda-titulo" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-ayuda-titulo">Ayuda Productos</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <input id="txtBusqueda" class="form-control mb-2" placeholder="Buscar producto..." />
+            </div>
+            <div class="table-scrollable" style="max-height: 70vh; overflow-y: auto">
+              <table id="tablaBusqueda" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaBusquedaDetalle"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div id="modal-ayuda-spinner" class="spinner-border d-none" role="status">
+              <span class="visually-hidden">Buscando...</span>
+            </div>
+            <button type="button" class="btn btn-secondary" id="btnBuscar">Buscar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Agregar el enlace al archivo de Bootstrap JavaScript (requerido para que funcionen algunos componentes de Bootstrap) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.js"></script>
     <script src="main.js"></script>
   </body>
 </html>
