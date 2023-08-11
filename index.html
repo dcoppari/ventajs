@@ -63,7 +63,10 @@
               <form role="form">
                 <div class="form-group mb-2">
                   <label for="codigo">Código:</label>
-                  <input type="number" class="form-control" id="codigo" />
+                  <div class="input-group mb-3">
+                    <input type="number" class="form-control" id="codigo" />
+                    <button class="btn btn-warning" type="button" id="btnAyuda">Ayuda</button>
+                  </div>
                   <p class="help-block">Ingrese código de producto mediante scanner o presione ayuda para buscar</p>
                 </div>
                 <div class="form-group mb-2">
@@ -134,15 +137,15 @@
           <!-- ACCION -->
           <div class="row mt-3">
             <div class="col-12">
-              <a id="btnEnvio" href="#" role="button" class="btn btn-secondary btn-block w-100 mb-2" data-bs-toggle="modal" data-bs-target="#modal-container-envio">Información de Envío</a>
-              <button id="finalizar" type="button" class="btn btn-success btn-block w-100 mb-2">FINALIZAR</button>
+              <a id="btnEnvio" href="#" role="button" class="btn btn-secondary btn-block w-100 mb-2" data-bs-toggle="modal" data-bs-target="#modal-envio">Información de Envío</a>
+              <button id="btnFinalizar" type="button" class="btn btn-success btn-block w-100 mb-2">FINALIZAR</button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="modal fade" id="modal-container-envio" role="dialog" aria-labelledby="modal-delivery" aria-hidden="true">
+    <div class="modal fade" id="modal-envio" role="dialog" aria-labelledby="modal-delivery" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -174,6 +177,41 @@
             <button type="button" class="btn btn-warning" id="btnBorrarEnvio">Borrar</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             <button type="button" class="btn btn-primary" id="btnGuardarEnvio">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modal-ayuda" aria-labelledby="modal-ayuda-titulo" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-ayuda-titulo">Ayuda Productos</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <input id="txtBusqueda" class="form-control mb-2" placeholder="Buscar producto..." />
+            </div>
+            <div class="table-scrollable" style="max-height: 70vh; overflow-y: auto">
+              <table id="tablaBusqueda" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaBusquedaDetalle"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div id="modal-ayuda-spinner" class="spinner-border d-none" role="status">
+              <span class="visually-hidden">Buscando...</span>
+            </div>
+            <button type="button" class="btn btn-secondary" id="btnBuscar">Buscar</button>
           </div>
         </div>
       </div>
