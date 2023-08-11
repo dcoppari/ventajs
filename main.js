@@ -138,8 +138,9 @@ class GestionProductos {
           modalAyuda.hide();
           if (codigo != null) {
             txtCodigo.value = codigo;
-            txtCodigo.focus();
-            txtCodigo.select();
+            // Fuerzo el evento change
+            const changeEvent = new Event("change");
+            txtCodigo.dispatchEvent(changeEvent);
           }
         };
 
@@ -440,6 +441,9 @@ function main() {
       txtDescripcion.innerText = producto.nombre;
       txtPrecio.innerText = producto.precioVenta;
       txtTotal.innerText = parseInt(txtCantidad.value || 0) * parseFloat(txtPrecio.innerText);
+      txtCantidad.focus();
+      txtCantidad.select();
+      e.preventDefault();
     } else {
       Swal.fire({ text: "Código de producto inexistente", icon: "error" }).then(() => {
         document.getElementById("codigo").focus();

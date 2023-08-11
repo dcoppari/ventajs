@@ -60,12 +60,12 @@
           <div class="row">
             <div class="col-12">
               <h5 class="pb-2 border-bottom">Ingresar producto</h5>
-              <form role="form">
+              <div role="form">
                 <div class="form-group mb-2">
                   <label for="codigo">Código:</label>
                   <div class="input-group mb-3">
                     <input type="number" class="form-control" id="codigo" />
-                    <button class="btn btn-warning" type="button" id="btnAyuda">Ayuda</button>
+                    <button class="btn btn-warning" type="button" tabindex="-1" id="btnAyuda">Ayuda</button>
                   </div>
                   <p class="help-block">Ingrese código de producto mediante scanner o presione ayuda para buscar</p>
                 </div>
@@ -98,7 +98,7 @@
                   <input type="hidden" id="itemId" />
                   <button class="btn btn-primary" id="btnCargar">Cargar</button>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
 
